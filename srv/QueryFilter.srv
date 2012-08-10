@@ -1,0 +1,10 @@
+#name of the filter
+string name
+
+---
+# minimum corner point of axis-aligned bounding box in global frame
+geometry_msgs/Point min
+
+# maximum corner point of axis-aligned bounding box in global frame
+geometry_msgs/Point max
+

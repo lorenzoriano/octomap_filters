@@ -1,0 +1,16 @@
+#name of the filter
+string name
+
+# minimum corner point of axis-aligned bounding box in global frame
+geometry_msgs/Point min
+
+# maximum corner point of axis-aligned bounding box in global frame
+geometry_msgs/Point max
+
+byte operation
+byte CREATE=0     #the area defined in the bounding box will be considered empty
+byte DISABLE=1  #disable the filter with name "name"
+byte ENABLE=2   #enable the filter with name "name"
+byte DELETE=3   #enable the filter with name "name"
+
+---

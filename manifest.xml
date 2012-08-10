@@ -1,0 +1,25 @@
+<package>
+  <description brief="octomap_filters">
+
+     octomap_fiter
+
+  </description>
+  <author>pezzotto</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/octomap_filters</url>
+  <depend package="roscpp"/>
+  <depend package="octomap_msgs"/>
+  <depend package="octomap_ros"/>
+  <depend package="arm_navigation_msgs"/>
+  <depend package="geometry_msgs"/>
+
+  <rosdep name="octomap" />
+
+  <export>
+    <cpp cflags="-I${prefix}/include" lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib -loctomap_filter" />
+  </export>
+
+</package>
+
+

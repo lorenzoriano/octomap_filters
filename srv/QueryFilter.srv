@@ -3,8 +3,8 @@ string name
 
 ---
 # minimum corner point of axis-aligned bounding box in global frame
-geometry_msgs/Point min
+geometry_msgs/PointStamped min
 
 # maximum corner point of axis-aligned bounding box in global frame
-geometry_msgs/Point max
+geometry_msgs/PointStamped max
 

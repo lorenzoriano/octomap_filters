@@ -9,12 +9,11 @@
 
 #include <octomap_filters/FilterDefine.h>
 #include <octomap_filters/QueryFilter.h>
-
 #include <string>
 
 OctomapFilter::OctomapFilter() {
-
 	tree_ = new octomap::OcTree(0.02);
+    octomap_frame_id_ = "/odom_combined";
 	std::string octomap_service_name = "/octomap_binary";
 	get_octomap_ =  nh_.serviceClient<octomap_msgs::GetOctomap> (octomap_service_name);
 	ROS_INFO("Waiting for service %s", octomap_service_name.c_str());
@@ -100,6 +99,7 @@ void OctomapFilter::getOccupiedPoints(std::vector<geometry_msgs::Point>& pointli
 			if (tree_->isNodeOccupied(*it)){
 				geometry_msgs::Point p;
 				p.x = it.getX();
+
 				p.y = it.getY();
 				p.z = it.getZ();
 				pointlist.push_back(p);
@@ -115,6 +115,7 @@ void OctomapFilter::ask_octomap(const ros::TimerEvent& e) {
 	if (not get_octomap_.call(req, res) ){
 		ROS_ERROR("Error while getting an octomap");
 		return;
+
 	}
 
 	octomap_frame_id_ = res.map.header.frame_id;
@@ -140,13 +141,13 @@ void OctomapFilter::apply_filters() {
 			octomap_filters::FilterDefine::Request& f = i->second.req;
 
 			octomap::point3d min;
-			min.x() = f.min.x;
-			min.y() = f.min.y;
-			min.z() = f.min.z;
+            min.x() = f.min.point.x;
+            min.y() = f.min.point.y;
+            min.z() = f.min.point.z;
 			octomap::point3d max;
-			max.x() = f.max.x;
-			max.y() = f.max.y;
-			max.z() = f.max.z;
+            max.x() = f.max.point.x;
+            max.y() = f.max.point.y;
+            max.z() = f.max.point.z;
 			updateNodesInBBX(min, max, false);
 		}
 	}
@@ -155,15 +156,23 @@ void OctomapFilter::apply_filters() {
 bool OctomapFilter::filter_cb(octomap_filters::FilterDefine::Request& request,
 		octomap_filters::FilterDefine::Response& response) {
 
+    octomap_filters::FilterDefine::Request newreq;
+    listener_.waitForTransform(octomap_frame_id_, request.min.header.frame_id, ros::Time(0),
+                               ros::Duration(10));
+    listener_.transformPoint(octomap_frame_id_, request.min, newreq.min);
+    listener_.waitForTransform(octomap_frame_id_, request.max.header.frame_id, ros::Time(0),
+                               ros::Duration(10));
+    listener_.transformPoint(octomap_frame_id_, request.max, newreq.max);
+
 	switch (request.operation) {
 	case octomap_filters::FilterDefine::Request::CREATE:
-		return new_filter(request, response);
+        return new_filter(newreq, response);
 	case octomap_filters::FilterDefine::Request::DISABLE:
-		return disable_filter(request, response);
+        return disable_filter(newreq, response);
 	case octomap_filters::FilterDefine::Request::ENABLE:
-		return enable_filter(request, response);
+        return enable_filter(newreq, response);
 	case octomap_filters::FilterDefine::Request::DELETE:
-		return delete_filter(request, response);
+        return delete_filter(newreq, response);
 	default:
 		ROS_ERROR("Unknown request!");
 		return false;

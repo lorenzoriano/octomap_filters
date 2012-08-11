@@ -2,10 +2,10 @@
 string name
 
 # minimum corner point of axis-aligned bounding box in global frame
-geometry_msgs/Point min
+geometry_msgs/PointStamped min
 
 # maximum corner point of axis-aligned bounding box in global frame
-geometry_msgs/Point max
+geometry_msgs/PointStamped max
 
 byte operation
 byte CREATE=0     #the area defined in the bounding box will be considered empty

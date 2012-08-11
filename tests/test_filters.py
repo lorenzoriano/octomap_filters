@@ -15,6 +15,8 @@ if __name__ == "__main__":
     create_filter = rospy.ServiceProxy("create_filter", FilterDefine)
     
     req = FilterDefineRequest()
+    req.min.header.frame_id = "/base_link"
+    req.max.header.frame_id = "/base_link"
     if len(sys.argv) == 1:
         req.operation = req.CREATE
     else:        
@@ -30,19 +32,19 @@ if __name__ == "__main__":
             req.name = sys.argv[2]            
 
     if len(sys.argv) == 9: #test_filters action name min_x, min_y, min_z, max_x, max_y, max_z
-        req.min.x = float(sys.argv[3])
-        req.min.y = float(sys.argv[4])
-        req.min.z = float(sys.argv[5])
-        req.max.x = float(sys.argv[6])
-        req.max.y = float(sys.argv[7])
-        req.max.z = float(sys.argv[8])
+        req.min.point.x = float(sys.argv[3])
+        req.min.point.y = float(sys.argv[4])
+        req.min.point.z = float(sys.argv[5])
+        req.max.point.x = float(sys.argv[6])
+        req.max.point.y = float(sys.argv[7])
+        req.max.point.z = float(sys.argv[8])
     else:
-        req.min.x = 0
-        req.min.y = 0
-        req.min.z = 0
-        req.max.x = 10
-        req.max.y = 10
-        req.max.z = 10
+        req.min.point.x = 0
+        req.min.point.y = 0
+        req.min.point.z = 0
+        req.max.point.x = 10
+        req.max.point.y = 10
+        req.max.point.z = 10
     
     rospy.loginfo("Sending request:\n%s",req) 
     create_filter(req)

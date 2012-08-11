@@ -9,6 +9,8 @@
 
 #include <octomap_filters/FilterDefine.h>
 #include <octomap_filters/QueryFilter.h>
+#include <tf/transform_listener.h>
+
 
 struct _InternalFilter {
 
@@ -50,6 +52,7 @@ public:
 	void apply_filters();
 
 protected:
+    tf::TransformListener listener_;
 	octomap::OcTree* tree_;
 	ros::NodeHandle nh_;
 	ros::ServiceClient get_octomap_;

@@ -13,6 +13,7 @@
   <depend package="octomap_ros"/>
   <depend package="arm_navigation_msgs"/>
   <depend package="geometry_msgs"/>
+  <depend package="tf"/>
 
   <rosdep name="octomap" />
 

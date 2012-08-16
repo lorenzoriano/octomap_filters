@@ -14,7 +14,7 @@
 
 struct _InternalFilter {
 
-	_InternalFilter() {};
+    _InternalFilter() {}
 	_InternalFilter(const octomap_filters::FilterDefine::Request& req, bool enabled) {
 		this->req = req;
 		this->enabled = enabled;
@@ -50,12 +50,14 @@ public:
 	void updateNodesInBBX(const octomap::point3d& min, const octomap::point3d& max, bool occupied);
 	void ask_octomap(const ros::TimerEvent& e);
 	void apply_filters();
+    void publish_filter_markers(const octomap_filters::FilterDefine::Request& req, int id);
 
 protected:
     tf::TransformListener listener_;
 	octomap::OcTree* tree_;
 	ros::NodeHandle nh_;
 	ros::ServiceClient get_octomap_;
+    ros::Publisher marker_pub_;
 
 	std::string octomap_frame_id_;
 	ros::Publisher cmap_publisher_;

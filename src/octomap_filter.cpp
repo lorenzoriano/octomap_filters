@@ -9,6 +9,8 @@
 
 #include <octomap_filters/FilterDefine.h>
 #include <octomap_filters/QueryFilter.h>
+
+#include <visualization_msgs/Marker.h>
 #include <string>
 
 OctomapFilter::OctomapFilter() {
@@ -26,6 +28,7 @@ OctomapFilter::OctomapFilter() {
 
 	filter_srv_ = nh_.advertiseService("create_filter", &OctomapFilter::filter_cb, this);
 	get_filter_info_srv = nh_.advertiseService("get_filter_info", &OctomapFilter::get_filter_info, this);
+    marker_pub_ = nh_.advertise<visualization_msgs::Marker>("filters_markers", 1);
 
 }
 
@@ -135,11 +138,11 @@ void OctomapFilter::ask_octomap(const ros::TimerEvent& e) {
 
 
 void OctomapFilter::apply_filters() {
+    int id =0;
 	for (std::map<std::string, _InternalFilter>::iterator i = filters_.begin();
 			i != filters_.end(); i++) {
 		if (i->second.enabled) {
 			octomap_filters::FilterDefine::Request& f = i->second.req;
-
 
 			octomap::point3d min;
             min.x() = f.min.point.x;
@@ -150,8 +153,49 @@ void OctomapFilter::apply_filters() {
             max.y() = f.max.point.y;
             max.z() = f.max.point.z;
 			updateNodesInBBX(min, max, false);
+
+            publish_filter_markers(i->second.req, id);
+            id++;
 		}
 	}
+}
+
+void OctomapFilter::publish_filter_markers(const octomap_filters::FilterDefine::Request& req, int id) {
+    visualization_msgs::Marker marker;
+    marker.header.frame_id = octomap_frame_id_;
+    marker.header.stamp = ros::Time::now();
+
+    marker.ns = req.name;
+    marker.type = visualization_msgs::Marker::CUBE;
+    marker.action = visualization_msgs::Marker::ADD;
+    marker.id = id;
+
+    float x = (req.max.point.x - req.min.point.x)/2.;
+    float dim_x = (req.max.point.x - req.min.point.x);
+    float y = (req.max.point.y - req.min.point.y)/2.;
+    float dim_y = (req.max.point.y - req.min.point.y);
+    float z = (req.max.point.z - req.min.point.z)/2.;
+    float dim_z = (req.max.point.z - req.min.point.z);
+
+    marker.pose.position.x = x;
+    marker.pose.position.y = y;
+    marker.pose.position.z = z;
+    marker.pose.orientation.x = 0.0;
+    marker.pose.orientation.y = 0.0;
+    marker.pose.orientation.z = 0.0;
+    marker.pose.orientation.w = 1.0;
+
+    marker.scale.x = dim_x;
+    marker.scale.y = dim_y;
+    marker.scale.z = dim_z;
+
+    marker.color.r = 1.0;
+    marker.color.g = 1.0;
+    marker.color.b = 1.0;
+    marker.color.a = 0.5;
+    marker.lifetime = ros::Duration(0.1);
+
+    marker_pub_.publish(marker);
 }
 
 bool OctomapFilter::filter_cb(octomap_filters::FilterDefine::Request& request,
@@ -255,6 +299,7 @@ bool OctomapFilter::get_filter_info(
 	response.min = i->second.req.min;
 	return true;
 }
+
 
 
 

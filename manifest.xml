@@ -14,6 +14,7 @@
   <depend package="arm_navigation_msgs"/>
   <depend package="geometry_msgs"/>
   <depend package="tf"/>
+  <depend package="visualization_msgs"/>
 
   <rosdep name="octomap" />
 

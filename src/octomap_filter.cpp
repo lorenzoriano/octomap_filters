@@ -231,9 +231,12 @@ bool OctomapFilter::new_filter(octomap_filters::FilterDefine::Request& request,
     geometry_msgs::PointStamped newmax;
     listener_.waitForTransform(octomap_frame_id_, request.max.header.frame_id, ros::Time(0),
                                ros::Duration(10));
-    listener_.transformPoint(octomap_frame_id_, request.max, newmax);
-    request.min = newmin;
-    request.max = newmax;
+    listener_.transformPoint(octomap_frame_id_, request.max, newmax); 
+
+    octomap_filters::FilterDefine::Request newrequest = request;
+    newrequest.min = newmin;
+    newrequest.max = newmax;
+    ROS_INFO("Newrequest min: %s (%f, %f, %f)", newrequest.min.header.frame_id.c_str(), newrequest.min.point.x, newrequest.min.point.y, newrequest.min.point.z);
 
     filters_[request.name] = _InternalFilter(request, true);
 	return true;

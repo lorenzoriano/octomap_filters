@@ -170,11 +170,11 @@ void OctomapFilter::publish_filter_markers(const octomap_filters::FilterDefine::
     marker.action = visualization_msgs::Marker::ADD;
     marker.id = id;
 
-    float x = (req.max.point.x - req.min.point.x)/2.;
+    float x = req.min.point.x + (req.max.point.x - req.min.point.x)/2.;
     float dim_x = (req.max.point.x - req.min.point.x);
-    float y = (req.max.point.y - req.min.point.y)/2.;
+    float y = req.min.point.y + (req.max.point.y - req.min.point.y)/2.;
     float dim_y = (req.max.point.y - req.min.point.y);
-    float z = (req.max.point.z - req.min.point.z)/2.;
+    float z = req.min.point.z + (req.max.point.z - req.min.point.z)/2.;
     float dim_z = (req.max.point.z - req.min.point.z);
 
     marker.pose.position.x = x;
@@ -190,8 +190,8 @@ void OctomapFilter::publish_filter_markers(const octomap_filters::FilterDefine::
     marker.scale.z = dim_z;
 
     marker.color.r = 1.0;
-    marker.color.g = 1.0;
-    marker.color.b = 1.0;
+    marker.color.g = 0.0;
+    marker.color.b = 0.0;
     marker.color.a = 0.5;
     marker.lifetime = ros::Duration(0.1);
 

@@ -140,11 +140,12 @@ void OctomapFilter::apply_filters() {
 		if (i->second.enabled) {
 			octomap_filters::FilterDefine::Request& f = i->second.req;
 
+
 			octomap::point3d min;
             min.x() = f.min.point.x;
             min.y() = f.min.point.y;
             min.z() = f.min.point.z;
-			octomap::point3d max;
+            octomap::point3d max;
             max.x() = f.max.point.x;
             max.y() = f.max.point.y;
             max.z() = f.max.point.z;
@@ -156,23 +157,15 @@ void OctomapFilter::apply_filters() {
 bool OctomapFilter::filter_cb(octomap_filters::FilterDefine::Request& request,
 		octomap_filters::FilterDefine::Response& response) {
 
-    octomap_filters::FilterDefine::Request newreq;
-    listener_.waitForTransform(octomap_frame_id_, request.min.header.frame_id, ros::Time(0),
-                               ros::Duration(10));
-    listener_.transformPoint(octomap_frame_id_, request.min, newreq.min);
-    listener_.waitForTransform(octomap_frame_id_, request.max.header.frame_id, ros::Time(0),
-                               ros::Duration(10));
-    listener_.transformPoint(octomap_frame_id_, request.max, newreq.max);
-
 	switch (request.operation) {
 	case octomap_filters::FilterDefine::Request::CREATE:
-        return new_filter(newreq, response);
-	case octomap_filters::FilterDefine::Request::DISABLE:
-        return disable_filter(newreq, response);
+        return new_filter(request, response);
+    case octomap_filters::FilterDefine::Request::DISABLE:
+        return disable_filter(request, response);
 	case octomap_filters::FilterDefine::Request::ENABLE:
-        return enable_filter(newreq, response);
+        return enable_filter(request, response);
 	case octomap_filters::FilterDefine::Request::DELETE:
-        return delete_filter(newreq, response);
+        return delete_filter(request, response);
 	default:
 		ROS_ERROR("Unknown request!");
 		return false;
@@ -184,7 +177,21 @@ bool OctomapFilter::new_filter(octomap_filters::FilterDefine::Request& request,
 		octomap_filters::FilterDefine::Response& response) {
 
     ROS_INFO_STREAM("Creating new filter, name "<<request.name);
-	filters_[request.name] = _InternalFilter(request, true);
+
+    listener_.waitForTransform(octomap_frame_id_, request.min.header.frame_id, ros::Time(0),
+                               ros::Duration(10));
+
+    geometry_msgs::PointStamped newmin;
+    listener_.transformPoint(octomap_frame_id_, request.min, newmin);
+
+    geometry_msgs::PointStamped newmax;
+    listener_.waitForTransform(octomap_frame_id_, request.max.header.frame_id, ros::Time(0),
+                               ros::Duration(10));
+    listener_.transformPoint(octomap_frame_id_, request.max, newmax);
+    request.min = newmin;
+    request.max = newmax;
+
+    filters_[request.name] = _InternalFilter(request, true);
 	return true;
 }
 

@@ -236,9 +236,8 @@ bool OctomapFilter::new_filter(octomap_filters::FilterDefine::Request& request,
     octomap_filters::FilterDefine::Request newrequest = request;
     newrequest.min = newmin;
     newrequest.max = newmax;
-    ROS_INFO("Newrequest min: %s (%f, %f, %f)", newrequest.min.header.frame_id.c_str(), newrequest.min.point.x, newrequest.min.point.y, newrequest.min.point.z);
 
-    filters_[request.name] = _InternalFilter(request, true);
+    filters_[newrequest.name] = _InternalFilter(newrequest, true);
 	return true;
 }
 

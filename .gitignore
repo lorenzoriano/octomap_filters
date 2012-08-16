@@ -21,4 +21,5 @@ srv_gen/
 bin/
 *.pyc
 *~
-
+src/octomap_filters/
+CMakeLists.txt.user

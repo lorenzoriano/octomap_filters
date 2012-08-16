@@ -191,6 +191,7 @@ bool OctomapFilter::new_filter(octomap_filters::FilterDefine::Request& request,
 bool OctomapFilter::enable_filter(octomap_filters::FilterDefine::Request& request,
 		octomap_filters::FilterDefine::Response& response) {
 
+    ROS_INFO("Enabling filter, name %s", request.name.c_str());
 	std::map<std::string, _InternalFilter>::iterator i;
 	i = filters_.find(request.name);
 	if (i == filters_.end()) {
@@ -205,6 +206,8 @@ bool OctomapFilter::enable_filter(octomap_filters::FilterDefine::Request& reques
 bool OctomapFilter::disable_filter(octomap_filters::FilterDefine::Request& request,
 		octomap_filters::FilterDefine::Response& response) {
 	std::map<std::string, _InternalFilter>::iterator i;
+
+    ROS_INFO("Disabling filter, name %s", request.name.c_str());
 	i = filters_.find(request.name);
 	if (i == filters_.end()) {
 		ROS_ERROR("No filter named %s", request.name.c_str());
@@ -218,6 +221,7 @@ bool OctomapFilter::disable_filter(octomap_filters::FilterDefine::Request& reque
 bool OctomapFilter::delete_filter(octomap_filters::FilterDefine::Request& request,
 		octomap_filters::FilterDefine::Response& response) {
 
+    ROS_INFO("Deleting filter, name %s", request.name.c_str());
 	std::map<std::string, _InternalFilter>::iterator i;
 	i = filters_.find(request.name);
 	if (i == filters_.end()) {
